@@ -1,7 +1,13 @@
 #include <bits/stdc++.h>
 #include <unordered_map>
 
-// https://leetcode.com/problems/lru-cache/
+
+/*Problem Statement: https://leetcode.com/problems/lru-cache/*/
+
+/**
+* This code is added and uploaded to github by Siddharth Saklecha and is licensed under the Apache 2.0 license - see https://www.apache.org/licenses/LICENSE-2.0
+* Written by: Siddharth Saklecha, https://github.com/imsiddhartha
+*/
 
 using namespace std;
 
