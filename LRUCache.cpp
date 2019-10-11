@@ -14,19 +14,35 @@ using namespace std;
 template<class T = int, class U = int>
 class CacheNode{
     T key;
-    T value;
-    
-    public: CacheNode(T k, T v){
+    U value;
+    bool modified;
+    // TODO - Cache update policy, write through or wrote back.
+
+    public: CacheNode(T k, U v){
         key=k;
         value=v;
+        modified=false;
+    }
+    public: CacheNode(T k, U v, bool isModified){
+        key=k;
+        value=v;
+        modified=isModified;
     }
     
     T getKey(){
         return key;
     }
     
-    T getValue(){
+    U getValue(){
         return value;
+    }
+
+    void setModified(bool modified){
+        this->modified=modified;
+    }
+
+    bool isModified(){
+        return modified;
     }
 };
 
@@ -49,9 +65,12 @@ class LRUCache {
             this->capacity=capacity;
         }
         
-        /** Returns value from the cache if present.*/
-        int get(T key) {
-            int ans=-1;
+        /** 
+        * Returns value from the cache if present.
+        * Otherwise return -1.
+        */
+        U get(T key) {
+            U ans=-1;
             if(hashmap.find(key) != hashmap.end()) {
                 list<CacheNode<>>::iterator it = hashmap[key];
                 ans = (*it).getValue();
@@ -64,16 +83,20 @@ class LRUCache {
     
         /** Puts value into the cache. If that entry already present then overwrites the previous one.*/
         void put(T key, U value) {
+            bool isModified=false;
             if(hashmap.find(key) == hashmap.end()) {
                 if(capacity == hashmap.size()){
                     //delete the least recently used entry.
-                    deleteNode(--q.end());
+                    list<CacheNode<>>::iterator it = --q.end();
+                    // if((*it).isModified()){ SAVE IT TO DB, by cache update policy.}
+                    deleteNode(it);
                 }
             }
             else{
                 deleteNode(hashmap[key]);
+                isModified=true;
             }
-            q.push_front(CacheNode<>(key, value));
+            q.push_front(CacheNode<>(key, value, isModified));
             hashmap[key]=q.begin();
         }
         
